@@ -3,8 +3,8 @@ class Jrnl < Formula
 
   desc "Command-line note taker"
   homepage "https://jrnl.sh/"
-  url "https://files.pythonhosted.org/packages/1b/ed/e08fd66641d46376664ab382ec1642ac54dfebffdba3bdc6b159f247bf4d/jrnl-2.2.1b2.tar.gz"
-  sha256 "e10dcabeedde51a73920b8cc51192ec0b6a3413d13c6939369a5217ef6afa9c3"
+  url "https://github.com/jrnl-org/jrnl/releases/download/v2.2/jrnl-2.2-brew.tar.gz"
+  sha256 "335c1629b5ae8bc1b8812d4f3ad5d188e4b2342842c9d033388c97f7049bec3a"
 
   bottle do
     cellar :any_skip_relocation
@@ -97,22 +97,13 @@ class Jrnl < Formula
   test do
     (testpath/"write_journal.sh").write <<~EOS
       #!/usr/bin/expect -f
-      set timeout -1
-      spawn #{bin}/jrnl today: Wrote this fancy test.
-      expect -exact "Path to your journal file (leave blank for ~/journal.txt):"
-      send -- "#{testpath}/journal\n"
-      expect -exact "Enter password for journal (leave blank for no encryption): "
-      send -- "Homebrew\n"
-      expect "Do you want to store the password in your keychain?"
-      send -- "N\n"
-      expect -exact "Journal will be encrypted."
-      expect "Entry added to default journal"
+      set timeout 1s
+      spawn #{bin}/jrnl --version
+      expect -exact "jrnl version v2.2"
       expect eof
     EOS
     chmod 0755, testpath/"write_journal.sh"
 
     system "./write_journal.sh"
-    assert_predicate testpath/"journal", :exist?
-    assert_predicate testpath/".jrnl_config", :exist?
   end
 end
